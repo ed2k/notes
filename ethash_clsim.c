@@ -18,11 +18,18 @@ typedef uint32_t uint;
 typedef unsigned __int128 uint4;
 typedef uint64_t ulong;
 typedef int bool;
-#define unt2(a,b) ((uint64_t)(a)<<32+b)
+#define unt2(a,b) ((uint64_t)(b)<<32|a)
 #define atomic_inc(a) (0)
-#define barrier(a) 
+#define barrier(a)
 #define get_global_id(a) (a)
-#define bitselect(a,b,c) if 
+uint64_t bitselect(uint64_t a,uint64_t b,uint64_t c) {
+    uint64_t r = 0;
+    for (int i=0;i<64;i++){
+        uint64_t mask = 1<<i;
+        r |= (c&mask)?(b&mask):(a&mask);
+    }
+    return r;
+}
 
 #define OPENCL_PLATFORM_UNKNOWN 0
 #define OPENCL_PLATFORM_NVIDIA  1
@@ -398,7 +405,7 @@ static void SHA3_512(uint2* s, uint isolate)
 {
 	for (uint i = 8; i != 25; ++i)
 	{
-		s[i] = (uint2){ 0, 0 };
+		s[i] = unt2( 0, 0 );
 	}
 	u2* v = (u2*)&(s[8]);
 	v->x = 0x00000001;
