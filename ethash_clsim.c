@@ -19,6 +19,10 @@ typedef unsigned __int128 uint4;
 typedef uint64_t ulong;
 typedef int bool;
 #define unt2(a,b) ((uint64_t)(a)<<32+b)
+#define atomic_inc(a) (0)
+#define barrier(a) 
+#define get_global_id(a) (a)
+#define bitselect(a,b,c) if 
 
 #define OPENCL_PLATFORM_UNKNOWN 0
 #define OPENCL_PLATFORM_NVIDIA  1
@@ -379,7 +383,7 @@ __kernel void ethash_search(
 	// keccak_256(keccak_512(header..nonce) .. mix);
 	keccak_f1600_no_absorb((uint2*)state, 1, isolate);
 
-    if (as_ulong(as_uchar8(state[0]).s76543210) > target)
+    if (state[0] > target)
         return;
     if (atomic_inc(&g_output->count))
         return;
@@ -396,8 +400,9 @@ static void SHA3_512(uint2* s, uint isolate)
 	{
 		s[i] = (uint2){ 0, 0 };
 	}
-	s[8].x = 0x00000001;
-	s[8].y = 0x80000000;
+	u2* v = (u2*)&(s[8]);
+	v->x = 0x00000001;
+	v->y = 0x80000000;
 	keccak_f1600_no_absorb(s, 8, isolate);
 }
 
