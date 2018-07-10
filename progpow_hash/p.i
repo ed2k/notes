@@ -8,8 +8,8 @@
 %{
 
 /* Put header files here or function declarations like below */
-extern int get_block_progpow_hash(uint8_t*,uint8_t*,uint64_t, uint8_t*);
+extern int get_block_progpow_hash_from_mix(uint8_t*,uint8_t*,uint64_t, uint8_t*);
 %}
 
-extern int get_block_progpow_hash(uint8_t*,uint8_t*,uint64_t, uint8_t*);
+extern int get_block_progpow_hash_from_mix(uint8_t*,uint8_t*,uint64_t, uint8_t*);
 

@@ -25,11 +25,11 @@ mix = to_array(
 nonce = (0x313dfc18);
 out = new_uint8array(32)
 
-r = get_block_progpow_hash(header, mix, nonce, out)
+r = get_block_progpow_hash_from_mix(header, mix, nonce, out)
 
 o = to_hexstring(out)
 print (r, o)
-#expect 0, 00000148b6715b3a32a7b36e5c820fcd4660acb72947ab9ebe4949134688066e
+print (o == "00000148b6715b3a32a7b36e5c820fcd4660acb72947ab9ebe4949134688066e")
 #don't forget to call delete_
 
 

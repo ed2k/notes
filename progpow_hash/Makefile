@@ -5,7 +5,7 @@ p_wrap.o: p_wrap.c
 	gcc -fPIC -c p_wrap.c -I /usr/include/python2.7
 
 progpow_block_header_hash.o: progpow_block_header_hash.cpp
-	g++ -fPIC -c progpow_block_header_hash.cpp -I /usr/include/python2.7 -fno-exceptions
+	g++ -fPIC -c progpow_block_header_hash.cpp -I /usr/include/python2.7 -fno-exceptions -fno-threadsafe-statics
 
 
 p_wrap.c: p.i
