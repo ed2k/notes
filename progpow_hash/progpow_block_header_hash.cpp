@@ -1,8 +1,5 @@
 #include <stdint.h>
 #include <string.h>
-//#include <iostream>
-
-#include "progpow_block_header_hash.h"
 
 
 #define ETHASH_REVISION 23
@@ -65,13 +62,6 @@ const uint32_t prog_keccakf_rndc[24] = {
 
 void keccak_f800_round(uint32_t st[25], const int r)
 {
-
-#if 0
-        const uint32_t keccakf_rotc[24] = {
-                1,  3,  6,  10, 15, 21, 28, 36, 45, 55, 2,  14,
-                27, 41, 56, 8,  25, 43, 62, 18, 39, 61, 20, 44
-        };
-#endif 
     const uint32_t keccakf_rotc[24] = {
         1,  3,  6,  10, 15, 21, 28, 4, 13, 23, 2,  14,
         27, 9, 24, 8,  25, 11, 30, 18, 7, 29, 20, 12 
