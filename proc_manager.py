@@ -34,7 +34,7 @@ class crash(object):
 
 
 from threading import Thread
-from Queue import Queue, Empty
+from queue import Queue, Empty
 
 class NonBlockingStreamReader:
 
@@ -71,12 +71,12 @@ class NonBlockingStreamReader:
     def stop(self):
         self.running = False
 
-a = '--chain etg --reserved-peers mp.txt  --tracing=on --fat-db=on -d /mnt/volume_nyc1_04/io.parity.ethereum/ --port 32800 --stratum-port=30100 --stratum --stratum-interface=0.0.0.0 --author 0xf0D06A0e485D0B47ca2418041AdD2Fb1838a601e --log-file ete.log'
+a = 'target/debug/parity -d data'
 CMDS = a.split()
 # comment out anything you don't want to run
 managed_processes = { 
-  "parityete": (".", ["./pete-v1.8.1"]+CMDS),
-  "parityete2": (".", ["./pete-v1.12"]+CMDS),
+  "prog_v1": (".", CMDS),
+  "prog_v2": (".", CMDS),
 }
 
 running = {}
@@ -121,7 +121,6 @@ def nativelauncher(pargs, cwd):
 
 
 def start_managed_process(name):
-  return
   if name in running or name not in managed_processes:
     return
   proc = managed_processes[name]
@@ -199,7 +198,9 @@ def get_message():
 
 
 def manager_thread():
-  ete = 'parityete'
+  """ switch between two programs (ex, different versions) given a pattern
+  """
+  ete = 'prog_v1'
   oldsts = ''
   while True:
     #cfd = os.path.dirname(os.path.realpath(__file__))
@@ -216,10 +217,10 @@ def manager_thread():
     sts = get_status()
     if sts == oldsts:
       kill_managed_process(ete)
-      ete = 'parityete2'
-    elif ete is 'parityete2':
+      ete = 'prog_v2'
+    elif ete is 'prog_v2':
       kill_managed_process(ete)
-      ete = 'parityete'
+      ete = 'prog_v1'
     oldsts = sts
     time.sleep(3)
 

@@ -194,20 +194,22 @@ def query_metrics():
         req_type = target.get('type', 'timeserie')
 
         query_results = metric_readers[finder](tfreq, ts_range)
+        print(query_results)
 
         if req_type == 'table':
             results.extend(dataframe_to_json_table(target, query_results))
         else:
             results.extend(dataframe_to_response(target, query_results, freq=freq))
-
+    print(results)
     return jsonify(results)
 
 
 @app.route('/annotations', methods=methods)
 @cross_origin(max_age=600)
 def query_annotations():
-    print(request.headers, request.get_json())
+    #print(request.headers, request.get_json())
     req = request.get_json()
+    print(req)
 
     results = []
 
@@ -217,11 +219,14 @@ def query_annotations():
     query = req['annotation']['query']
 
     if ':' not in query:
-        abort(404, Exception('Target must be of type: <finder>:<metric_query>, got instead: ' + query))
-
-    finder, target = query.split(':', 1)
-    results.extend(annotations_to_response(query, annotation_readers[finder](target, ts_range)))
-
+        #abort(404, Exception('Target must be of type: <finder>:<metric_query>, got instead: ' + query))
+        finder = query
+        target = '1'
+    else:
+        finder, target = query.split(':', 1)
+    results.extend(annotations_to_response(query, 
+        annotation_readers[finder](target, ts_range)))
+    print(results)
     return jsonify(results)
 
 
@@ -244,8 +249,10 @@ def get_panel():
 
 
 if __name__ == '__main__':
-    # Sample annotation reader : 
-    add_annotation_reader('midnights', lambda query_string, ts_range: pd.Series(index=pd.date_range(ts_range['$gt'], ts_range['$lte'], freq='D', normalize=True)).fillna('Text for annotation - midnight'))
+    # Sample annotation reader : from dashboard settings, annotations, query=midnights:24
+    add_annotation_reader('midnights', lambda query_string, ts_range:
+     pd.Series(index=pd.date_range(ts_range['$gt'], ts_range['$lte'], freq='D',
+      normalize=True)).fillna('Text for annotation - midnight'))
     # Sample timeseries reader : tested on grafana 6.0.2 with simple json datasource
     # docker run -d -p 3000:3000 --name=mygrafana -e "GF_INSTALL_PLUGINS=grafana-clock-panel,grafana-simple-json-datasource" grafana/grafana
     def get_sine(freq, ts_range):
