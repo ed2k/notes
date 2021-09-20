@@ -16,6 +16,10 @@ class SocksProxy(StreamRequestHandler):
     def handle(self):
         # Greeting header 2 bytes from a client
         header = self.connection.recv(2)
+        if len(header) < 2:
+            self.server.close_request(self.request)
+            print('close, header len < 2')
+            return
         version, nmethods = struct.unpack("!BB", header)
 
         # socks 5
@@ -36,7 +40,12 @@ class SocksProxy(StreamRequestHandler):
         self.connection.sendall(struct.pack("!BB", SOCKS_VERSION, 0))
 
         # request
-        version, cmd, _, address_type = struct.unpack("!BBBB", self.connection.recv(4))
+        try:
+            version, cmd, _, address_type = struct.unpack("!BBBB", self.connection.recv(4))
+        except:
+            print('close during request handling')
+            self.server.close_request(self.request)
+            return
         # print('req', version, cmd, address_type)
 
         if address_type == 1:  # IPv4
@@ -48,7 +57,11 @@ class SocksProxy(StreamRequestHandler):
                self.server.close_request(self.request)
                return
             # print('dl', domain_length, address)
-            address = socket.gethostbyname(address)
+            try:
+                ipaddress = socket.gethostbyname(address)
+            except:
+                print('err gethostbyname', address)
+                ipaddress = address
             # print(' dn', address)
         port = struct.unpack('!H', self.connection.recv(2))[0]
 
@@ -56,7 +69,7 @@ class SocksProxy(StreamRequestHandler):
         try:
             if cmd == 1:  # CONNECT
                 remote = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-                remote.connect((address, port))
+                remote.connect((ipaddress, port))
                 bind_address = remote.getsockname()
                 #logging.info('Connected to %s %s' % (address, port))
             else:
