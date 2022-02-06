@@ -1,0 +1,8 @@
+**/*.bak
+**/*.pyc
+**/*.o
+**/.vscode
+**/*.so
+__pycache__
+celery
+
